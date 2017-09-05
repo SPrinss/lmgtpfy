@@ -1,0 +1,7 @@
+{
+  "name": "lmgtpfy",
+  "short_name": "lmgtpfy",
+  "description": "Let me Google that properly for you",
+  "start_url": "/",
+  "display": "standalone"
+}
