@@ -3,7 +3,14 @@
   "description": "Let me Google that properly for you",
   "main": "index.html",
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.9.0"
+    "polymer": "Polymer/polymer#^1.9.0",
+    "paper-input": "^2.0.2",
+    "paper-button": "PolymerElements/paper-button#^2.0.0",
+    "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#^2.0.0",
+    "iron-dropdown": "PolymerElements/iron-dropdown#^2.0.0",
+    "paper-menu": "PolymerElements/paper-menu#^1.3.0",
+    "paper-item": "PolymerElements/paper-item#^2.0.0",
+    "paper-listbox": "PolymerElements/paper-listbox#^2.0.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

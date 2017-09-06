@@ -1,4 +1,9 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 
 <dom-module id="lmgtpfy-app">
   <template>
@@ -7,7 +12,23 @@
         display: block;
       }
     </style>
-    <h2>Hello [[prop1]]</h2>
+
+    <paper-input value="{{searchQueryClean}}" placeholder="all these words:"></paper-input>
+    <paper-input value="{{searchQueryVerbatimClean}}" placeholder="this exact word or phrase:"></paper-input>
+    <paper-input value="{{searchQueryExcludedClean}}" placeholder="none of these words"></paper-input>
+
+      <paper-listbox  selected="{{timeRestriction}}" attr-for-selected="time-restriction">
+          <paper-item time-restriction="">None</paper-item>
+          <paper-item time-restriction="&tbs=qdr:h">Hour</paper-item>
+          <paper-item time-restriction="&tbs=qdr:d">Day</paper-item>
+          <paper-item time-restriction="&tbs=qdr:w">Week</paper-item>
+          <paper-item time-restriction="&tbs=qdr:m">Month</paper-item>
+          <paper-item time-restriction="&tbs=qdr:y">Year</paper-item>
+      </paper-listbox>
+
+    
+    <paper-button on-tap="_handleSearchButtonTap">Search</paper-button>
+
   </template>
 
   <script>
@@ -16,11 +37,95 @@
       is: 'lmgtpfy-app',
 
       properties: {
-        prop1: {
-          type: String,
-          value: 'lmgtpfy-app',
+        searchQueryClean: {
+          type: String
+        },        
+
+        searchQueryVerbatimClean: {
+          type: String
         },
+        searchQueryExcludedClean: {
+          type: String
+        },
+
+        searchQuery: {
+          type: String,
+          value: "",
+          computed: "_computeSearchQuery(searchQueryClean)"          
+        },          
+
+        searchQueryVerbatim: {
+          type: String,
+          value: "",
+          computed: "_computeSearchQueryVerbatim(searchQueryVerbatimClean)"
+        },
+        searchQueryExcluded: {
+          type: String,
+          value: "",          
+          computed: "_computeSearchQueryExcluded(searchQueryExcludedClean)"
+        },        
+
+        timeRestriction: {
+          type: String,
+          value: ""
+        },
+
+        href: {
+          type: String,
+          value: "https://www.google.com",
+          computed: '_computeHref(searchQuery, searchQueryVerbatim, searchQueryExcluded, timeRestriction)'
+        }
       },
+      openLink: function (href, target) {
+        var a = document.createElement('a');
+        a.href = href ? href : this.href;
+        a.target = target ? target : '_blank';
+        a.click();
+      },
+
+      splitStringIntoArray:function (originalString) {
+        return originalString.split(" ");
+      },
+
+      _computeHref: function (searchQuery, searchQueryVerbatim, searchQueryExcluded, timeRestriction) {
+        var query = 'https://www.google.com/#q=' + searchQuery + searchQueryVerbatim  + searchQueryExcluded +  timeRestriction;
+        console.log(query)
+        return query
+      },
+
+
+
+      _addMinusToEachPartOfString: function (originalString) {
+        var stringArray = originalString.split(" ");
+        var updatedStringArray = stringArray.map(i => '-' + i);
+        return updatedStringArray.join(' ');
+      },
+
+      _handleSearchButtonTap: function () {
+        this.openLink()
+      },
+
+      _computeSearchQuery: function (searchQueryClean) {
+        var searchItems = this.splitStringIntoArray(searchQueryClean);
+        var searchString = searchItems.length>0 ? searchItems.join('+') + "+" : "";        
+        return searchString;
+      },
+
+      _computeSearchQueryVerbatim: function (searchQueryVerbatimClean) {
+        var verbatimSearchItems = this.splitStringIntoArray(searchQueryVerbatimClean);
+        var updateverbatimSearchItems = verbatimSearchItems.map(function(a) { return '"' + a + '"'; });
+        var verbatimSearchString = updateverbatimSearchItems.length>0 ? updateverbatimSearchItems.join('+') + "+" : "";        
+        return verbatimSearchString;
+      },
+
+      _computeSearchQueryExcluded: function (searchQueryExcludedClean) {
+        var excludedSearchItems = this.splitStringIntoArray(searchQueryExcludedClean);
+        var updatedStringArray = excludedSearchItems.map(i => '-' + i);
+        var searchQueryExcludedString = updatedStringArray.length>0 ? updatedStringArray.join('+') + "+" : "";
+        return searchQueryExcludedString;
+      }      
+
+
 
     });
   </script>
